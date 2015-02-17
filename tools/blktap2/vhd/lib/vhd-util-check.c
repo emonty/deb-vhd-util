@@ -89,7 +89,7 @@ vhd_util_check_validate_footer(vhd_footer_t *footer)
 		     footer->crtr_ver == VHD_VERSION(1, 1))) {
 			char tmp = footer->hidden;
 			footer->hidden = 0;
-			checksum = vhd_checksum_footer(footer);
+			checksum = vhd_checksum_footer(footer); /* ignore 'hidden' */
 			footer->hidden = tmp;
 
 			if (checksum == footer->checksum)

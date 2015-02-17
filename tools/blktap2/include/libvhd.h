@@ -24,6 +24,19 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
+/*++
+
+History:   Alfred Song			06/24/2010
+			add globle debug flag declare: 		vhd_globle_dbg
+			add macro: 							VHD_GLOBLE_LOG
+		   Alfred Song			06/25/2010
+			add function:						vhd_raw_to_fixed
+												vhd_fiexed_to_raw
+			Alfred Song			07/12/2010
+			add function:						vhd_fiexed_to_dynamic
+												vhd_dynamic_to_fixed
+
+--*/
 #ifndef _VHD_LIB_H_
 #define _VHD_LIB_H_
 
@@ -36,6 +49,7 @@
 #include <sys/bswap.h>
 #endif
 
+#include <syslog.h>
 #include "vhd-uuid.h"
 #include "vhd.h"
 
@@ -68,6 +82,17 @@
   #define BE64_OUT(foo)
 #endif
 
+
+extern int vhd_globle_dbg; /* system log switch */
+
+#define VHD_GLOBLE_LOG(_f, _a...)						\
+	do {												\
+		if (vhd_globle_dbg)								\
+			syslog(LOG_INFO, "%s\\%s, %d\\"_f,	\
+			       __FILE__, __func__, __LINE__, ##_a);						\
+	} while (0)
+
+
 #define MIN(a, b)                  (((a) < (b)) ? (a) : (b))
 #define MAX(a, b)                  (((a) > (b)) ? (a) : (b))
 
@@ -75,6 +100,7 @@
 
 #define VHD_BLOCK_SHIFT            21
 #define VHD_BLOCK_SIZE             (1ULL << VHD_BLOCK_SHIFT)
+#define VHD_SECTORS_PER_BLOCK		(VHD_BLOCK_SIZE >> VHD_SECTOR_SHIFT)
 
 #define UTF_16                     "UTF-16"
 #define UTF_16LE                   "UTF-16LE"
@@ -128,9 +154,9 @@ typedef struct vhd_context         vhd_context_t;
 typedef uint32_t                   vhd_flag_creat_t;
 
 struct vhd_bat {
-	uint32_t                   spb;
-	uint32_t                   entries;
-	uint32_t                  *bat;
+	uint32_t                   spb;          /* sector number per block */
+	uint32_t                   entries;    /* total entry number */
+	uint32_t                  *bat;         /* entry table */
 };
 
 struct vhd_batmap {
@@ -144,8 +170,8 @@ struct vhd_context {
 	int                        oflags;
 	int                        is_block;
 
-	uint32_t                   spb;
-	uint32_t                   bm_secs;
+	uint32_t                   spb;            /* sectors per block */
+	uint32_t                   bm_secs;        /* sectors of bitmap */
 
 	vhd_header_t               header;
 	vhd_footer_t               footer;
@@ -322,5 +348,79 @@ int vhd_write_block(vhd_context_t *, uint32_t block, char *data);
 
 int vhd_io_read(vhd_context_t *, char *, uint64_t, uint32_t);
 int vhd_io_write(vhd_context_t *, char *, uint64_t, uint32_t);
+
+off_t get_file_size_rev(const char * name);
+
+/*++
+
+  Function Name:	vhd_raw_to_fixed
+
+  Description:      convert raw disk image to fixed type vhd disk image
+
+  Creator:          Alfred Song        06/25/2010
+
+  Input:			src_name		- source file name
+  					tag_name		- target file name
+
+  Output:			0				- success
+  					others			- fail
+
+--*/
+int vhd_raw_to_fixed(char * src_name, char * tag_name);
+
+/*++
+
+  Function Name:	vhd_fixed_to_raw
+
+  Description:      convert fixed type vhd disk image to raw disk image
+
+  Creator:          Alfred Song        06/25/2010
+
+  Input:			src_name		- source file name
+  					tag_name		- target file name
+
+  Output:			0				- success
+  					others			- fail
+
+--*/
+int vhd_fixed_to_raw(char * src_name, char * tag_name);
+
+/*++
+
+  Function Name:	vhd_fixed_to_dynamic
+
+  Description:      convert fixed type vhd disk image to dynamic type vhd disk image
+
+  Creator:          Alfred Song        07/07/2010
+
+  Input:			src_name		- source file name
+  					tag_name		- target file name
+
+  Output:			0				- success
+  					others			- fail
+
+--*/
+int
+vhd_fixed_to_dynamic(char * src_name, char * tag_name);
+
+/*++
+
+  Function Name:	vhd_dynamic_to_fixed
+
+  Description:      convert dynamic type vhd disk image to fixed type vhd disk image
+
+  Creator:          Alfred Song        07/07/2010
+
+  Input:			src_name		- source file name
+  					tag_name		- target file name
+
+  Output:			0				- success
+  					others			- fail
+
+--*/
+int
+vhd_dynamic_to_fixed(char * src_name, char * tag_name);
+
+//int get_file_size(char *, off_t *);
 
 #endif

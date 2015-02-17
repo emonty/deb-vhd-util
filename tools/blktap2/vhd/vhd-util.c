@@ -24,6 +24,13 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
+/*++
+
+History:   Alfred Song			06/24/2010
+			add process function: 		vhd_util_convert
+			add globle debug set: 		vhd_globle_dbg
+
+--*/
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -59,6 +66,7 @@ struct command commands[] = {
 	{ .name = "scan",        .func = vhd_util_scan          },
 	{ .name = "check",       .func = vhd_util_check         },
 	{ .name = "revert",      .func = vhd_util_revert        },
+	{ .name = "convert",     .func = vhd_util_convert       },
 };
 
 #define print_commands()					\
@@ -136,8 +144,10 @@ main(int argc, char *argv[])
 	for (i = 1; i < cargc; i++) {
 		char *arg = argv[i + (argc - cargc)];
 
+		/* system log for debug, and ignore this option */
 		if (!strcmp(arg, "--debug")) {
 			libvhd_set_log_level(1);
+			vhd_globle_dbg = 1;
 			continue;
 		}
 

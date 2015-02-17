@@ -24,6 +24,13 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
+
+/*++
+
+History:   Alfred Song			06/24/2010
+			add function vhd_util_convert
+
+--*/
 #ifndef _VHD_UTIL_H_
 #define _VHD_UTIL_H_
 
@@ -40,5 +47,6 @@ int vhd_util_modify(int argc, char **argv);
 int vhd_util_scan(int argc, char **argv);
 int vhd_util_check(int argc, char **argv);
 int vhd_util_revert(int argc, char **argv);
+int vhd_util_convert(int argc, char ** argv);
 
 #endif
