@@ -37,6 +37,8 @@ config.log
 config.status
 config.cache
 config/Toplevel.mk
+config.sub
+config.guess
 
 build-*
 dist/*
