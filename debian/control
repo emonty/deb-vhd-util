@@ -1,5 +1,5 @@
 Source: vhd-util
-Section: main
+Section: devel
 Priority: optional
 Maintainer: Monty Taylor <mordred@inaugust.com>
 Build-Depends:
