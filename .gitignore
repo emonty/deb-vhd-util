@@ -1,4 +1,5 @@
 .hg
+.pc
 *.orig
 *.rej
 *~
