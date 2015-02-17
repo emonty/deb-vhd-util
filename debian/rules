@@ -8,4 +8,4 @@
 	dh $@  --with autotools-dev --sourcedirectory=tools
 
 override_dh_auto_configure:
-	./configure --disable-monitors --disable-ocamltools --disable-rombios --disable-seabios
+	dh_auto_configure -- --disable-monitors --disable-ocamltools --disable-rombios --disable-seabios
